@@ -1,0 +1,44 @@
+# Build outputs
+bin/
+obj/
+out/
+publish/
+artifacts/
+
+# Logs
+logs/
+*.log
+
+# Test outputs
+TestResults/
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# IDE / editor
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local env / secrets
+.env
+.env.*
+secrets/
+appsettings.Local.json
+appsettings.*.local.json
+
+# Docker/local data for this project
+mssql/data/
+mssql/log/
+mssql/secrets/
+cloudbeaver/workspace/
