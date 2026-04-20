@@ -26,8 +26,10 @@ public class CommentService : ICommentService
         {
             throw new KeyNotFoundException("Task not found.");
         }
-
-        EnsureOwnership(task.Project.UserId, userId);
+        if (task.Project.UserId != userId)
+        {
+            throw new ForbiddenAccessException("You are not allowed to access comments for this task.");
+        }
 
         return await _context.TaskComments
             .AsNoTracking()
@@ -52,9 +54,12 @@ public class CommentService : ICommentService
         {
             throw new KeyNotFoundException("Comment not found.");
         }
-
-        EnsureOwnership(comment.TaskItem.Project.UserId, userId);
-
+        if (comment.TaskItem.Project.UserId != userId)
+        {
+            throw new ForbiddenAccessException("You are not allowed to access this comment.");
+        }
+        
+        
         return new CommentResponseDto
         {
             Id = comment.Id,
@@ -73,8 +78,10 @@ public class CommentService : ICommentService
         {
             throw new KeyNotFoundException("Task not found.");
         }
-
-        EnsureOwnership(task.Project.UserId, userId);
+        if (task.Project.UserId != userId)
+        {
+            throw new ForbiddenAccessException("You are not allowed to add comments to this task.");
+        }
 
         var comment = new TaskComment
         {
@@ -104,8 +111,10 @@ public class CommentService : ICommentService
         {
             throw new KeyNotFoundException("Comment not found.");
         }
-
-        EnsureOwnership(comment.TaskItem.Project.UserId, userId);
+        if (comment.TaskItem.Project.UserId != userId)
+        {
+            throw new ForbiddenAccessException("You are not allowed to update this comment.");
+        }
 
         comment.Content = dto.Content;
 
@@ -123,18 +132,11 @@ public class CommentService : ICommentService
         {
             throw new KeyNotFoundException("Comment not found.");
         }
-
-        EnsureOwnership(comment.TaskItem.Project.UserId, userId);
-
+        if (comment.TaskItem.Project.UserId != userId)
+        {
+            throw new ForbiddenAccessException("You are not allowed to delete this comment.");
+        }
         _context.TaskComments.Remove(comment);
         await _context.SaveChangesAsync();
-    }
-
-    private static void EnsureOwnership(int ownerUserId, int currentUserId)
-    {
-        if (ownerUserId != currentUserId)
-        {
-            throw new ForbiddenAccessException("You are not allowed to access comments for this task.");
-        }
     }
 }

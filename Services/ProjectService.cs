@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Api.Data;
 using TaskFlow.Api.DTOs.Projects;
 using TaskFlow.Api.Models;
 using TaskFlow.Api.Services.Interfaces;
+using TaskFlow.Api.Exceptions;
 
 namespace TaskFlow.Api.Services;
 
@@ -85,7 +87,7 @@ public class ProjectService : IProjectService
 
         if (project.UserId != userId)
         {
-            throw new UnauthorizedAccessException("You are not allowed to update this project.");
+            throw new ForbiddenAccessException("You are not allowed to update this project.");
         }
 
         project.Name = dto.Name;
@@ -106,7 +108,7 @@ public class ProjectService : IProjectService
 
         if (project.UserId != userId)
         {
-            throw new UnauthorizedAccessException("You are not allowed to delete this project.");
+            throw new ForbiddenAccessException("You are not allowed to delete this project.");
         }
 
         _context.Projects.Remove(project);
