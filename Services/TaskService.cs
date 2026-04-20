@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Api.Data;
+using TaskFlow.Api.DTOs.Comments;
 using TaskFlow.Api.DTOs.Tasks;
+using TaskFlow.Api.Exceptions;
 using TaskFlow.Api.Models;
 using TaskFlow.Api.Models.Enums;
 using TaskFlow.Api.Services.Interfaces;
@@ -20,13 +22,22 @@ public class TaskService : ITaskService
     {
         return await _context.Tasks
             .AsNoTracking()
+            .Include(t => t.Comments)
             .Select(task => new TaskResponseDto
             {
                 Id = task.Id,
                 Title = task.Title,
                 Status = task.Status,
                 DueDate = task.DueDate,
-                ProjectId = task.ProjectId
+                ProjectId = task.ProjectId,
+                Comments = task.Comments
+                    .Select(comment => new CommentResponseDto
+                    {
+                        Id = comment.Id,
+                        Content = comment.Content,
+                        TaskItemId = comment.TaskItemId
+                    })
+                    .ToList()
             })
             .ToListAsync();
     }
@@ -35,6 +46,7 @@ public class TaskService : ITaskService
     {
         var task = await _context.Tasks
             .AsNoTracking()
+            .Include(t => t.Comments)
             .FirstOrDefaultAsync(t => t.Id == id);
 
         if (task is null)
@@ -48,7 +60,15 @@ public class TaskService : ITaskService
             Title = task.Title,
             Status = task.Status,
             DueDate = task.DueDate,
-            ProjectId = task.ProjectId
+            ProjectId = task.ProjectId,
+            Comments = task.Comments
+                .Select(comment => new CommentResponseDto
+                {
+                    Id = comment.Id,
+                    Content = comment.Content,
+                    TaskItemId = comment.TaskItemId
+                })
+                .ToList()
         };
     }
 
@@ -64,7 +84,7 @@ public class TaskService : ITaskService
 
         if (project.UserId != userId)
         {
-            throw new UnauthorizedAccessException("You are not allowed to add a task to this project.");
+            throw new ForbiddenAccessException("You are not allowed to add a task to this project.");
         }
 
         var task = new TaskItem
@@ -84,7 +104,8 @@ public class TaskService : ITaskService
             Title = task.Title,
             Status = task.Status,
             DueDate = task.DueDate,
-            ProjectId = task.ProjectId
+            ProjectId = task.ProjectId,
+            Comments = new List<CommentResponseDto>()
         };
     }
 
@@ -108,7 +129,7 @@ public class TaskService : ITaskService
 
         if (project.UserId != userId)
         {
-            throw new UnauthorizedAccessException("You are not allowed to update this task.");
+            throw new ForbiddenAccessException("You are not allowed to update this task.");
         }
 
         task.Title = dto.Title;
@@ -138,7 +159,7 @@ public class TaskService : ITaskService
 
         if (project.UserId != userId)
         {
-            throw new UnauthorizedAccessException("You are not allowed to delete this task.");
+            throw new ForbiddenAccessException("You are not allowed to delete this task.");
         }
 
         _context.Tasks.Remove(task);

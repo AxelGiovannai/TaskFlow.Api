@@ -1,3 +1,4 @@
+using TaskFlow.Api.DTOs.Comments;
 using TaskFlow.Api.Models.Enums;
 
 namespace TaskFlow.Api.DTOs.Tasks;
@@ -13,4 +14,6 @@ public class TaskResponseDto
     public DateTime? DueDate { get; set; }
 
     public int ProjectId { get; set; }
+
+    public List<CommentResponseDto> Comments { get; set; } = new();
 }

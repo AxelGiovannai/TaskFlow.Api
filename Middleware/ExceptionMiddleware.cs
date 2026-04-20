@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using TaskFlow.Api.Exceptions;
 
 namespace TaskFlow.Api.Middleware;
 
@@ -31,8 +32,10 @@ public class ExceptionMiddleware
         var statusCode = exception switch
         {
             UnauthorizedAccessException => (int)HttpStatusCode.Unauthorized,
+            ForbiddenAccessException => (int)HttpStatusCode.Forbidden,
             InvalidOperationException => (int)HttpStatusCode.BadRequest,
             KeyNotFoundException => (int)HttpStatusCode.NotFound,
+            // potentiellement faire passer le 403/401 par le middleware plutot que par ASP.NET Core, pour éviter de devoir faire du try/catch dans les services
             _ => (int)HttpStatusCode.InternalServerError
         };
 
