@@ -17,8 +17,8 @@ Une API REST de gestion de projets et de tâches construite avec .NET 10 et ASP.
 ## Prérequis
 
 - .NET 10 SDK
-- SQL Server (ou SQL Server Express)
-- Docker et Docker Compose (optionnel, pour l'environnement)
+- Microsoft SQL  
+- Docker et Docker Compose
 
 ## Installation
 
@@ -74,17 +74,18 @@ Mettez à jour `appsettings.json` pour utiliser `localhost:1433` comme serveur.
 ### Mode développement
 
 ```bash
-dotnet run
+dotnet run --launch-profile https
 ```
 
-L'API sera accessible à `https://localhost:5001` ou `http://localhost:5000`
+L'API sera accessible à `https://localhost:7087` ou `http://localhost:5195`
 
 ### Swagger UI
 
 Une fois l'application démarrée, accédez à la documentation interactive Swagger :
 
 ```
-https://localhost:5001/swagger/index.html
+https://localhost:7087/swagger
+http://localhost:5195/swagger
 ```
 
 Vous pouvez tester tous les endpoints directement depuis l'interface.
@@ -98,7 +99,7 @@ L'API utilise les tokens JWT (JSON Web Tokens) pour l'authentification.
 Après connexion, vous recevrez un token JWT. Incluez-le dans l'en-tête `Authorization` de vos requêtes :
 
 ```bash
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://localhost:5001/api/projects
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" https://localhost:7087/api/projects
 ```
 
 ### Configuration JWT
